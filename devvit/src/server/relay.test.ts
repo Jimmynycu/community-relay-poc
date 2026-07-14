@@ -204,6 +204,25 @@ test('first run baselines every source and forwards no existing posts', async ()
   assert.equal(cursor.highWaterCreatedAt, fixedNow.toISOString());
 });
 
+test('missing settings remain disabled and never poll Reddit', async () => {
+  const store = new FakeStore();
+  let fetches = 0;
+  const result = await runRelayOnce({
+    destination: 'Testing_POC',
+    settings: loadRelaySettings({}),
+    store,
+    fetchNewPosts: async () => {
+      fetches += 1;
+      return [];
+    },
+    now: () => store.now(),
+  });
+
+  assert.equal(result.status, 'disabled');
+  assert.equal(result.attempted, 0);
+  assert.equal(fetches, 0);
+});
+
 test('bounded baseline plus creation cutoff rejects unseen older history after churn', async () => {
   const store = new FakeStore();
   const crossposts: CrosspostCall[] = [];
@@ -604,8 +623,16 @@ test('settings parser allowlists sources and restores conservative invalid caps'
       enabled: true,
       destinationConfirmation: 'r/TestDest',
       sources: ['cats', 'dogs'],
-      maxPerHour: 6,
-      maxPerDay: 24,
+      maxPerHour: 1,
+      maxPerDay: 1,
     },
   );
+
+  assert.deepEqual(loadRelaySettings({}), {
+    enabled: false,
+    destinationConfirmation: '',
+    sources: ['cats', 'dogs'],
+    maxPerHour: 1,
+    maxPerDay: 1,
+  });
 });

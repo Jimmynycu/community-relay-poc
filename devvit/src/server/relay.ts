@@ -136,8 +136,8 @@ export function loadRelaySettings(raw: Readonly<Record<string, unknown>>): Relay
         ? raw.destinationConfirmation
         : '',
     sources,
-    maxPerHour: boundedInteger(raw.maxCrosspostsPerHour, 6, 1, 12),
-    maxPerDay: boundedInteger(raw.maxCrosspostsPerDay, 24, 1, 48),
+    maxPerHour: boundedInteger(raw.maxCrosspostsPerHour, 1, 1, 12),
+    maxPerDay: boundedInteger(raw.maxCrosspostsPerDay, 1, 1, 48),
   };
 }
 

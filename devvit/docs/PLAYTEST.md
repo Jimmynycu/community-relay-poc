@@ -4,9 +4,11 @@
 
 Local build and test commands below keep writable tooling state under
 `G:\Try_out`. The login, playtest, upload, install, and publish commands
-also change external Reddit account/community state. They were **not** executed
-while building this repository. Run them only as the Reddit account owner and
-only for a community you own or moderate.
+also change external Reddit account/community state. Run them only as the Reddit
+account owner and only for a community you own or moderate. The one authorized
+live test performed for this POC is recorded in
+[LIVE_TEST_2026-07-14.md](LIVE_TEST_2026-07-14.md); the app was uninstalled
+afterward and was not published.
 
 ## 1. Prepare the destination
 
@@ -15,7 +17,7 @@ Devvit playtest communities must have fewer than 200 subscribers. The
 destination should permit crossposts and should have rules that clearly explain
 the automated feed.
 
-The app slug in `devvit.json` is currently `community-relay`. App slugs are
+The app slug in `devvit.json` is currently `relay-poc-jimmy`. App slugs are
 global; change it to a unique 3–20 character lowercase slug if Reddit reports
 that it is unavailable. If you change it, use that same slug in the URLs and
 commands below.
@@ -61,7 +63,7 @@ installed.
 The relay defaults to disabled. Open:
 
 ```text
-https://developers.reddit.com/r/YOUR_TEST_SUBREDDIT/apps/community-relay
+https://developers.reddit.com/r/YOUR_TEST_SUBREDDIT/apps/relay-poc-jimmy
 ```
 
 Set:

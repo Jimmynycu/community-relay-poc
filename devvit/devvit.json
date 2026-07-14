@@ -1,6 +1,9 @@
 {
   "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
-  "name": "community-relay",
+  "name": "relay-poc-jimmy",
+  "dev": {
+    "subreddit": "Testing_POC"
+  },
   "server": {
     "dir": "dist/server",
     "entry": "index.js"
@@ -40,13 +43,13 @@
       "maxCrosspostsPerHour": {
         "type": "number",
         "label": "Maximum crossposts per hour (1-12)",
-        "defaultValue": 6,
+        "defaultValue": 1,
         "validationEndpoint": "/internal/settings/validate-hourly-cap"
       },
       "maxCrosspostsPerDay": {
         "type": "number",
         "label": "Maximum crossposts per UTC day (1-48)",
-        "defaultValue": 24,
+        "defaultValue": 1,
         "validationEndpoint": "/internal/settings/validate-daily-cap"
       }
     }

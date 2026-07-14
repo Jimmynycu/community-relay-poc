@@ -23,8 +23,8 @@ of communities at high volume is approved or production-safe.
   never retried automatically.
 - SFW-only filtering. NSFW, stickied, removed, spam, and quarantined source posts
   are never forwarded.
-- At most two write attempts per scheduler invocation, six per UTC hour by
-  default, and 24 per UTC day by default. Reservations and both counters are
+- At most two write attempts per scheduler invocation, one per UTC hour by
+  default, and one per UTC day by default. Reservations and both counters are
   persisted before dispatch. Settings can never raise these above 12/hour and
   48/day.
 - Moderator menu actions for an on-demand safe run and a compact status report.
@@ -46,10 +46,10 @@ Set-Location G:\Try_out
 The wrapper redirects the Windows profile/AppData locations, XDG directories,
 temporary paths, npm cache/prefix/config/logs, Node cache/history, and Devvit
 CLI state beneath `.build\devvit`, restores the caller's environment, and runs
-`npm ci`, schema validation, strict TypeScript checking, 15 unit tests, the
+`npm ci`, schema validation, strict TypeScript checking, 16 unit tests, the
 production bundle, and `npm audit`.
-The checked-in dependencies target Devvit `0.13.7`, the current documented
-release when this POC was built (2026-07-14).
+The checked-in dependencies remain pinned to Devvit `0.13.7`, the version used
+for the successful private test on 2026-07-14.
 `package.json` overrides the CLI's transitive `tmp` dependency to patched
 `0.2.7`; the complete dependency tree passes `npm audit` as built.
 
@@ -58,6 +58,10 @@ release when this POC was built (2026-07-14).
 Follow [PLAYTEST.md](docs/PLAYTEST.md). Those steps log in to Reddit, upload an
 app, and install it into a subreddit, so they change external Reddit state and
 must be performed deliberately by the Reddit account owner.
+
+The authorized private live test completed successfully on 2026-07-14: one
+new `r/cats` post became one native crosspost in `r/Testing_POC`, after which
+the app was uninstalled. See [LIVE_TEST_2026-07-14.md](docs/LIVE_TEST_2026-07-14.md).
 
 ## Important limits
 

@@ -39,6 +39,9 @@ separate written permission/contracting from Reddit.
 For a live proof before external Data API approval, see `devvit/`: it contains a
 Reddit-hosted playtest app that polls `r/cats` and `r/dogs`, deduplicates IDs in
 Redis, and performs native crossposts inside a small destination test community.
+An authorized private live test on 2026-07-14 created exactly one native
+crosspost in `r/Testing_POC`; the app was then uninstalled and left unpublished.
+See `devvit/docs/LIVE_TEST_2026-07-14.md` for the evidence and scope.
 
 ## Windows app setup
 
