@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>CommunityRelayPOC-Setup</AssemblyName>
+    <RootNamespace>CommunityRelay.Setup</RootNamespace>
+    <Version>0.1.0</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Payload\payload.zip"
+                      LogicalName="CommunityRelay.Setup.Payload.zip"
+                      Condition="Exists('Payload\payload.zip')" />
+    <EmbeddedResource Include="Payload\payload-manifest.json"
+                      LogicalName="CommunityRelay.Setup.Payload.manifest.json"
+                      Condition="Exists('Payload\payload-manifest.json')" />
+    <EmbeddedResource Include="Resources\Uninstall.ps1"
+                      LogicalName="CommunityRelay.Setup.Uninstall.ps1" />
+  </ItemGroup>
+
+  <Target Name="RequireGeneratedPayload" BeforeTargets="CoreCompile"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Error Condition="!Exists('Payload\payload.zip')"
+           Text="Installer payload is missing. Run scripts\build-installer.ps1 from the repository root." />
+    <Error Condition="!Exists('Payload\payload-manifest.json')"
+           Text="Installer payload manifest is missing. Run scripts\build-installer.ps1 from the repository root." />
+  </Target>
+</Project>

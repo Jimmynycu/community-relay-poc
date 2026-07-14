@@ -1,0 +1,87 @@
+{
+  "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
+  "name": "relay-poc-jimmy",
+  "dev": {
+    "subreddit": "Testing_POC"
+  },
+  "server": {
+    "dir": "dist/server",
+    "entry": "index.js"
+  },
+  "permissions": {
+    "reddit": true,
+    "redis": true
+  },
+  "settings": {
+    "subreddit": {
+      "relayEnabled": {
+        "type": "boolean",
+        "label": "Enable automatic crossposts",
+        "defaultValue": false
+      },
+      "destinationConfirmation": {
+        "type": "string",
+        "label": "Destination subreddit name (must exactly match this installation)",
+        "defaultValue": "",
+        "validationEndpoint": "/internal/settings/validate-destination"
+      },
+      "sourceSubreddits": {
+        "type": "multiSelect",
+        "label": "Source subreddits",
+        "options": [
+          {
+            "label": "r/cats",
+            "value": "cats"
+          },
+          {
+            "label": "r/dogs",
+            "value": "dogs"
+          }
+        ],
+        "defaultValue": ["cats", "dogs"]
+      },
+      "maxCrosspostsPerHour": {
+        "type": "number",
+        "label": "Maximum crossposts per hour (1-12)",
+        "defaultValue": 1,
+        "validationEndpoint": "/internal/settings/validate-hourly-cap"
+      },
+      "maxCrosspostsPerDay": {
+        "type": "number",
+        "label": "Maximum crossposts per UTC day (1-48)",
+        "defaultValue": 1,
+        "validationEndpoint": "/internal/settings/validate-daily-cap"
+      }
+    }
+  },
+  "scheduler": {
+    "tasks": {
+      "poll-sources": {
+        "endpoint": "/internal/scheduler/poll-sources",
+        "cron": "*/1 * * * *"
+      }
+    }
+  },
+  "menu": {
+    "items": [
+      {
+        "label": "Community Relay: run now",
+        "description": "Poll configured sources now; all safety gates and caps still apply",
+        "location": "subreddit",
+        "forUserType": "moderator",
+        "endpoint": "/internal/menu/run-now"
+      },
+      {
+        "label": "Community Relay: status",
+        "description": "Show current relay state",
+        "location": "subreddit",
+        "forUserType": "moderator",
+        "endpoint": "/internal/menu/status"
+      }
+    ]
+  },
+  "scripts": {
+    "dev": "npm run build -- --watch",
+    "build": "npm run build"
+  }
+}
