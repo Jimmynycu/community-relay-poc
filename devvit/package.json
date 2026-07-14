@@ -1,0 +1,30 @@
+{
+  "name": "community-relay-devvit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "build": "npm run clean && esbuild --bundle --log-level=warning --sourcemap=linked --minify --target=es2023 --format=cjs --outdir=dist/server --platform=node src/server/index.ts",
+    "clean": "node scripts/clean.mjs",
+    "playtest": "devvit playtest",
+    "test": "npm run validate:config && npm run typecheck && node --experimental-strip-types --no-warnings=ExperimentalWarning --test src/server/relay.test.ts && npm run build",
+    "typecheck": "tsc --noEmit",
+    "validate:config": "node scripts/validate-config.mjs"
+  },
+  "dependencies": {
+    "@devvit/web": "0.13.7"
+  },
+  "devDependencies": {
+    "@devvit/shared-types": "0.13.7",
+    "@types/node": "22.20.1",
+    "devvit": "0.13.7",
+    "esbuild": "0.28.1",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "tmp": "0.2.7"
+  }
+}

@@ -1,0 +1,238 @@
+<Window x:Class="CommunityRelay.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Community Relay POC"
+        Width="1040"
+        Height="760"
+        MinWidth="880"
+        MinHeight="640"
+        Background="{StaticResource BackgroundBrush}"
+        Closing="Window_Closing">
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0" Margin="0,0,0,14">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <StackPanel>
+        <TextBlock Text="Community Relay" FontSize="28" FontWeight="SemiBold" Foreground="#172033" />
+        <TextBlock Text="Native crosspost proof of concept • r/cats + r/dogs → your test community"
+                   Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0" />
+      </StackPanel>
+      <Border Grid.Column="1" CornerRadius="16" Padding="14,7" Background="#E8EEF8" VerticalAlignment="Center">
+        <TextBlock x:Name="StatusText" Text="Stopped" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold" />
+      </Border>
+    </Grid>
+
+    <Border Grid.Row="1" x:Name="PolicyBanner" Background="#FFF4D6" BorderBrush="#E0A93B" BorderThickness="1"
+            CornerRadius="6" Padding="12" Margin="0,0,0,14">
+      <TextBlock TextWrapping="Wrap" Foreground="#654B12">
+        <Run FontWeight="SemiBold">Approval gate:</Run>
+        <Run> Reddit's June 2026 policy requires approval before external Data API access. Demo mode is offline. Live mode stays locked until the three confirmations in Setup are checked.</Run>
+      </TextBlock>
+    </Border>
+
+    <TabControl Grid.Row="2" x:Name="MainTabs" Background="Transparent" BorderThickness="0">
+      <TabItem Header="Dashboard">
+        <Grid Margin="0,14,0,0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <Border Grid.Row="0" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+            <StackPanel>
+              <TextBlock Text="Safe walkthrough" FontSize="17" FontWeight="SemiBold" />
+              <TextBlock Text="The demo resets its own state, baselines existing synthetic IDs, then discovers new IDs. It never contacts Reddit."
+                         TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,12" />
+              <WrapPanel>
+                <Button x:Name="RunDemoButton" Content="Run offline demo" Click="RunDemoButton_Click" />
+                <Button x:Name="OpenDataButton" Content="Open app data" Click="OpenDataButton_Click" />
+                <Button Content="Open setup guide" Click="OpenSetupGuideButton_Click" />
+              </WrapPanel>
+            </StackPanel>
+          </Border>
+
+          <Border Grid.Row="1" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="16" Margin="0,0,0,12">
+            <StackPanel>
+              <TextBlock Text="Relay controls" FontSize="17" FontWeight="SemiBold" Margin="0,0,0,12" />
+              <WrapPanel>
+                <Button x:Name="StartButton" Content="Start continuous" Click="StartButton_Click" />
+                <Button x:Name="StopButton" Content="Emergency stop" Click="StopButton_Click" IsEnabled="False" />
+                <Button x:Name="RunOnceButton" Content="Poll once" Click="RunOnceButton_Click" />
+                <Button x:Name="TestOneButton" Content="Test one crosspost" Click="TestOneButton_Click" />
+                <Button Content="Destination" Click="OpenDestinationButton_Click" />
+              </WrapPanel>
+              <TextBlock x:Name="ModeSummaryText" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" />
+            </StackPanel>
+          </Border>
+
+          <Border Grid.Row="2" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="12">
+            <Grid>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <TextBlock Text="Activity (no post bodies, authors, or tokens are stored)"
+                         FontSize="16" FontWeight="SemiBold" Margin="4,2,0,10" />
+              <DataGrid Grid.Row="1" x:Name="ActivityGrid" ItemsSource="{Binding Activity}"
+                        AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                        HeadersVisibility="Column" GridLinesVisibility="Horizontal"
+                        SelectionMode="Single" MouseDoubleClick="ActivityGrid_MouseDoubleClick">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Time" Binding="{Binding Time}" Width="150" />
+                  <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="90" />
+                  <DataGridTextColumn Header="Event" Binding="{Binding Message}" Width="*" />
+                </DataGrid.Columns>
+              </DataGrid>
+            </Grid>
+          </Border>
+
+          <TextBlock Grid.Row="3" Text="Tip: double-click an activity row to open its destination crosspost or original post."
+                     Foreground="{StaticResource MutedBrush}" Margin="4,8,0,0" />
+        </Grid>
+      </TabItem>
+
+      <TabItem Header="Setup">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,14,0,0">
+          <StackPanel MaxWidth="850" HorizontalAlignment="Left">
+            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="18" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="1. Operating mode" FontSize="18" FontWeight="SemiBold" />
+                <CheckBox x:Name="DemoModeCheckBox" Content="Offline Demo mode (no Reddit connection)" />
+                <CheckBox x:Name="DryRunCheckBox" Content="Dry run (read approved API listings but create no posts)" />
+                <TextBlock Text="Live mode means both boxes are off. It creates real native crossposts and requires confirmation when settings are saved."
+                           TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" />
+              </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="18" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="2. Approved OAuth configuration" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="Client ID" />
+                <TextBox x:Name="ClientIdTextBox" />
+                <TextBlock Text="Client secret (optional; only if Reddit issued one)" />
+                <PasswordBox x:Name="ClientSecretPasswordBox" />
+                <TextBlock x:Name="SecretStoredText" Foreground="{StaticResource MutedBrush}" Margin="0,-7,0,9" />
+                <TextBlock Text="Contact Reddit username (without u/)" />
+                <TextBox x:Name="ContactUsernameTextBox" />
+                <TextBlock Text="OAuth callback (must match exactly)" />
+                <TextBox Text="http://127.0.0.1:53682/callback" IsReadOnly="True" Background="#F1F3F6" />
+                <WrapPanel>
+                  <Button Content="Request API access" Click="RequestApiAccessButton_Click" />
+                  <Button Content="OAuth app page" Click="OAuthAppsButton_Click" />
+                  <Button x:Name="AuthorizeButton" Content="Authorize" Click="AuthorizeButton_Click" />
+                  <Button x:Name="TestConnectionButton" Content="Test connection" Click="TestConnectionButton_Click" />
+                  <Button Content="Clear authorization" Click="ClearAuthorizationButton_Click" />
+                </WrapPanel>
+              </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="18" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="3. Communities and filters" FontSize="18" FontWeight="SemiBold" />
+                <TextBlock Text="Destination community (without r/)" />
+                <TextBox x:Name="DestinationTextBox" />
+                <WrapPanel>
+                  <Button Content="Create community" Click="CreateCommunityButton_Click" />
+                  <Button Content="Community settings" Click="CommunitySettingsButton_Click" />
+                </WrapPanel>
+                <TextBlock Text="Source communities — one per line (maximum 500; listing reads are paced to 80/minute)" />
+                <TextBox x:Name="SourcesTextBox" Height="82" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0">
+                    <TextBlock Text="Include title keywords (comma separated; blank = all)" />
+                    <TextBox x:Name="IncludeKeywordsTextBox" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="Exclude title keywords (comma separated)" />
+                    <TextBox x:Name="ExcludeKeywordsTextBox" />
+                  </StackPanel>
+                </Grid>
+                <CheckBox x:Name="AllowNsfwCheckBox" Content="Allow NSFW sources (off by default)" />
+                <CheckBox x:Name="SkipStickiedCheckBox" Content="Skip stickied posts" />
+              </StackPanel>
+            </Border>
+
+            <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="18" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="4. Polling and write caps" FontSize="18" FontWeight="SemiBold" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0">
+                    <TextBlock Text="Poll interval seconds (30–3600)" />
+                    <TextBox x:Name="PollIntervalTextBox" />
+                    <TextBlock Text="Maximum crossposts per hour (1–30)" />
+                    <TextBox x:Name="HourlyCapTextBox" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="Scan limit per source (1–100)" />
+                    <TextBox x:Name="ScanLimitTextBox" />
+                    <TextBlock Text="Maximum crossposts per day (1–100)" />
+                    <TextBox x:Name="DailyCapTextBox" />
+                  </StackPanel>
+                </Grid>
+              </StackPanel>
+            </Border>
+
+            <Border Background="#FFF4D6" BorderBrush="#E0A93B" BorderThickness="1" CornerRadius="8" Padding="18" Margin="0,0,0,12">
+              <StackPanel>
+                <TextBlock Text="5. Required live-access acknowledgements" FontSize="18" FontWeight="SemiBold" />
+                <CheckBox x:Name="ApiApprovalCheckBox" Content="Reddit explicitly approved this external Data API use case." />
+                <CheckBox x:Name="PrivateDestinationCheckBox" Content="The destination is private or restricted during this POC." />
+                <CheckBox x:Name="ModeratorCheckBox" Content="I moderate the destination and accept responsibility for its automated posts." />
+                <TextBlock Text="These statements are persisted as operator settings. The connection test independently verifies moderator access and destination type."
+                           TextWrapping="Wrap" Foreground="#654B12" />
+              </StackPanel>
+            </Border>
+
+            <WrapPanel Margin="0,0,0,24">
+              <Button x:Name="SaveButton" Content="Save settings" Click="SaveButton_Click" />
+              <Button Content="Back to dashboard" Click="BackToDashboardButton_Click" />
+            </WrapPanel>
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
+
+      <TabItem Header="Limits &amp; next layer">
+        <ScrollViewer Margin="0,14,0,0">
+          <Border Background="{StaticResource CardBrush}" CornerRadius="8" Padding="22" MaxWidth="850" HorizontalAlignment="Left">
+            <StackPanel>
+              <TextBlock Text="What this proves" FontSize="20" FontWeight="SemiBold" />
+              <TextBlock TextWrapping="Wrap" Margin="0,8,0,18"
+                         Text="The POC proves discovery, deterministic filters, first-run baselining, first-seen age cleanup, native crossposts, write pacing, caps, persisted API pauses, OAuth storage, and no-blind-retry reconciliation." />
+              <TextBlock Text="What it does not prove" FontSize="20" FontWeight="SemiBold" />
+              <TextBlock TextWrapping="Wrap" Margin="0,8,0,18"
+                         Text="It is not a 2,000-community firehose, a commercial launch, a mobile push service, or permission to bypass Reddit review. Polling thousands of communities is a separate policy and infrastructure project." />
+              <TextBlock Text="Notification-app layer" FontSize="20" FontWeight="SemiBold" />
+              <TextBlock TextWrapping="Wrap" Margin="0,8,0,18"
+                         Text="The later app should subscribe users to normalized relay events and apply per-user source, keyword, post-type, NSFW, and quiet-hour filters before push delivery. It should not re-scrape the aggregate destination." />
+              <WrapPanel>
+                <Button Content="Responsible Builder Policy" Click="ResponsiblePolicyButton_Click" />
+                <Button Content="Data API rules" Click="DataApiRulesButton_Click" />
+                <Button Content="Devvit documentation" Click="DevvitDocsButton_Click" />
+              </WrapPanel>
+            </StackPanel>
+          </Border>
+        </ScrollViewer>
+      </TabItem>
+    </TabControl>
+  </Grid>
+</Window>
